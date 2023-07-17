@@ -1,3 +1,6 @@
+
+**Note: This is the updated version of v5.2.1 with our changes**
+
 ## react-native-video
 
 A `<Video>` component for react-native, as seen in
