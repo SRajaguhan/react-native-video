@@ -112,20 +112,20 @@ enum RCTPlayerOperations {
                 }
             }
         } else { // default. invalid type or "system"
-            #if TARGET_OS_TV
-                // Do noting. Fix for tvOS native audio menu language selector
-            #else
+//            #if TARGET_OS_TV
+//                // Do noting. Fix for tvOS native audio menu language selector
+//            #else
                 player?.currentItem?.selectMediaOptionAutomatically(in: group)
                 return
-            #endif
+           // #endif
         }
         
-        #if TARGET_OS_TV
-            // Do noting. Fix for tvOS native audio menu language selector
-        #else
+//        #if TARGET_OS_TV
+//            // Do noting. Fix for tvOS native audio menu language selector
+//        #else
             // If a match isn't found, option will be nil and text tracks will be disabled
             player?.currentItem?.select(mediaOption, in:group)
-        #endif
+     //   #endif
     }
     
     static func setMediaSelectionTrackForCharacteristic(player:AVPlayer?, characteristic:AVMediaCharacteristic, criteria:SelectedTrackCriteria?) {
@@ -220,7 +220,9 @@ enum RCTPlayerOperations {
                 if #available(iOS 16.0, *) {
                     do {
                         debugPrint("[RCTPlayerOperations] Reseting AVAudioSession category to playAndRecord with defaultToSpeaker options.")
+                        #if TARGET_OS_IOS && TARGET_OS_IPHONE
                         try audioSession.setCategory(AVAudioSession.Category.playAndRecord, options: AVAudioSession.CategoryOptions.defaultToSpeaker)
+                        #endif
                     } catch {
                         debugPrint("[RCTPlayerOperations] Reseting AVAudioSession category and options problem. Error: \(error).")
                     }

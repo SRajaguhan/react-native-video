@@ -452,12 +452,28 @@ class RCTVideo: UIView, RCTVideoPlayerViewControllerDelegate, RCTPlayerObserverH
                 _imaAdsManager.getAdsManager()?.resume()
 #endif
             } else {
+#if TARGET_OS_IOS && TARGET_OS_IPHONE
                 if #available(iOS 10.0, *), !_automaticallyWaitsToMinimizeStalling {
                     _player?.playImmediately(atRate: _rate)
                 } else {
                     _player?.play()
                     _player?.rate = _rate
                 }
+#else
+
+        if #available(tvOS 10.0, *), !_automaticallyWaitsToMinimizeStalling {
+            _player?.playImmediately(atRate: _rate)
+        } else {
+            _player?.play()
+            _player?.rate = _rate
+        }
+#endif
+//                if #available(iOS 10.0, *), !_automaticallyWaitsToMinimizeStalling {
+//                    _player?.playImmediately(atRate: _rate)
+//                } else {
+//                    _player?.play()
+//                    _player?.rate = _rate
+//                }
                 _player?.rate = _rate
             }
         }
@@ -530,21 +546,41 @@ class RCTVideo: UIView, RCTVideoPlayerViewControllerDelegate, RCTPlayerObserverH
     @objc
     func setPreferredForwardBufferDuration(_ preferredForwardBufferDuration:Float) {
         _preferredForwardBufferDuration = preferredForwardBufferDuration
-        if #available(iOS 10.0, *) {
+#if TARGET_OS_IOS && TARGET_OS_IPHONE
+            if #available(iOS 10.0, *) {
+                _playerItem?.preferredForwardBufferDuration = TimeInterval(preferredForwardBufferDuration)
+            }
+#else
+
+        if #available(tvOS 10.0, *) {
             _playerItem?.preferredForwardBufferDuration = TimeInterval(preferredForwardBufferDuration)
-        } else {
-            // Fallback on earlier versions
         }
+#endif
+//        if #available(iOS 10.0, *) {
+//            _playerItem?.preferredForwardBufferDuration = TimeInterval(preferredForwardBufferDuration)
+//        } else {
+//            // Fallback on earlier versions
+//        }
     }
 
     @objc
     func setAutomaticallyWaitsToMinimizeStalling(_ waits:Bool) {
         _automaticallyWaitsToMinimizeStalling = waits
-        if #available(iOS 10.0, *) {
+#if TARGET_OS_IOS && TARGET_OS_IPHONE
+            if #available(iOS 10.0, *) {
+                _player?.automaticallyWaitsToMinimizeStalling = waits
+            }
+#else
+
+        if #available(tvOS 10.0, *) {
             _player?.automaticallyWaitsToMinimizeStalling = waits
-        } else {
-            // Fallback on earlier versions
         }
+#endif
+//        if #available(iOS 10.0, *) {
+//            _player?.automaticallyWaitsToMinimizeStalling = waits
+//        } else {
+//            // Fallback on earlier versions
+//        }
     }
     
     func setPlaybackRange(_ item:AVPlayerItem!, withVideoStart videoStart:Int64?, withVideoEnd videoEnd:Int64?) {
@@ -570,12 +606,23 @@ class RCTVideo: UIView, RCTVideoPlayerViewControllerDelegate, RCTPlayerObserverH
             _player?.volume = _volume
             _player?.isMuted = false
         }
+        
+#if TARGET_OS_IOS && TARGET_OS_IPHONE
+            if #available(iOS 12.0, *) {
+                _player?.preventsDisplaySleepDuringVideoPlayback = _preventsDisplaySleepDuringVideoPlayback
+            }
+#elseif TARGET_OS_TV
 
-        if #available(iOS 12.0, *) {
+        if #available(tvOS 12.0, *) {
             _player?.preventsDisplaySleepDuringVideoPlayback = _preventsDisplaySleepDuringVideoPlayback
-        } else {
-            // Fallback on earlier versions
         }
+#endif
+
+//        if #available(iOS 12.0, *) {
+//            _player?.preventsDisplaySleepDuringVideoPlayback = _preventsDisplaySleepDuringVideoPlayback
+//        } else {
+//            // Fallback on earlier versions
+//        }
 
         if let _maxBitRate = _maxBitRate {
             setMaxBitRate(_maxBitRate)
